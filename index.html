@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Finanças</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="budget-container">
+        <div class="app-title">
+            <a href="">App<b>Finanças</b></a>
+        </div>
+        <div class="budget-header">
+            <div class="balance">
+                <div class="title">
+                    Balanço
+                </div>
+                <div class="value">
+                    <small>$</small>0
+                </div>
+            </div>
+            <div class="account">
+                <div class="income">
+                    <div class="title">
+                        Receitas
+                    </div>
+                    <div class="income-total">
+                        <small>$</small>0
+                    </div>
+                </div>
+                <div class="chart"></div>
+                <div class="outcome">
+                    <div class="title">
+                        Despesas
+                    </div>
+                    <div class="outcome-total">
+                        <small>R$</small>0
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="budget-dashboard">
+            <div class="dash-title">Visão Geral</div>
+            <div class="toggle">
+                <div class="tab1">Despesa</div>
+                <div class="tab2">Receita</div>
+                <div class="tab3 active">Todas</div>
+            </div>
+            <div class="hide" id="income">
+                <ul class="list"></ul>
+                <div class="input">                  
+                        <select id="income-title-input" name="income-title-input" placeholder="Tipo">
+                            <option value="Salário">Salário</option>
+                            <option value="Investimentos">Investimentos</option>
+                            <option value="Aluguel">Aluguel</option>
+                            <option value="Vendas">Vendas</option>
+                        </select>
+                        <input type="number" id="income-amount-input" name="income-amount-input" placeholder="R$0">
+                        <div class="add-income"><img src="icon/plus.png" alt=""></div>
+                </div>
+            </div>
+            <div class="hide" id="expense">
+                <ul class="list"></ul>
+                <div class="input">
+                    <select id="expense-title-input" name="expense-title-input" placeholder="Tipo">
+                        <option value="Casa">Casa</option>
+                        <option value="Água">Água</option>
+                        <option value="Luz">Luz</option>
+                        <option value="Aluguel">Aluguel</option>
+                        <option value="Dívidas">Dívidas</option>
+                    </select>
+                    <input type="number" id="expense-amount-input" name="expense-amount-input" placeholder="R$0">
+                    <div class="add-expense"><img src="icon/plus.png" alt=""></div>
+                </div>
+            </div>
+            <div id="all">
+                <ul class="list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="chart.js"></script>
+    <script src="budget.js"></script>
+</body>
+</html>
