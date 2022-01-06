@@ -2,7 +2,7 @@
 function fazPost(url, body) {
     console.log("Body=", body)
     let request = new XMLHttpRequest()
-    request.open("POST", url, true)
+    request.open("POST", url+id, true)
     request.setRequestHeader("Content-type", "application/json")
     request.send(JSON.stringify(body))
 
@@ -13,6 +13,17 @@ function fazPost(url, body) {
     return request.responseText
 }
 
+function fazDelete(url) {
+    let request = new XMLHttpRequest()
+    request.open("DELETE", url+id, false)
+    request.send()
+    
+    request.onload = function() {
+        console.log(this.responseText)
+    }
+
+    return request.responseText
+}
 // SELECT ELEMENTS
 const balanceEl = document.querySelector(".balance .value");
 const incomeTotalEl = document.querySelector(".income-total");
@@ -77,7 +88,7 @@ addExpense.addEventListener("click", function(){
         title : expenseTitle.value,
         amount : parseInt(expenseAmount.value)
     }
-    let url = "http://phlucasfr.pythonanywhere.com/hoteis"
+    let url = "http://phlucasfr.pythonanywhere.com/despesa"
     let nomeSaida = document.getElementById("expense-title-input").value
     let valorSaida = document.getElementById("expense-amount-input").value
     console.log(nomeSaida)   
@@ -104,13 +115,26 @@ addIncome.addEventListener("click", function(){
     let income = {
         type : "income",
         title : incomeTitle.value,
-        amount : parseInt(incomeAmount.value)
+        amount : parseInt(incomeAmount.value),
     }
-    let url = "http://phlucasfr.pythonanywhere.com/hoteis/teste2"
+    let url = "http://phlucasfr.pythonanywhere.com/receita/"  
     let nomeEntrada = document.getElementById("income-title-input").value
+    idEntradas = document.getElementById("income-title-input").querySelector('option:checked')
+    idEntrada = idEntradas.dataset.ident
     let valorEntrada = document.getElementById("income-amount-input").value
+    
+    id = idEntrada
+    
+    
     console.log(nomeEntrada)
     console.log(valorEntrada)
+
+    body = {
+        "tipo": nomeEntrada,
+        "valor": valorEntrada
+    }
+
+    fazPost(url, body)
 
     ENTRY_LIST.push(income);
 
@@ -137,8 +161,14 @@ function deleteOrEdit(event){
 }
 
 function deleteEntry(entry){
-    ENTRY_LIST.splice( entry.id, 1);
+    console.log(entry)
+    let url = "http://phlucasfr.pythonanywhere.com/receita/"    
+    dltid = id
+    console.log(dltid)
+    fazDelete(url);
 
+    ENTRY_LIST.splice(entry.id, 1);
+   
     updateUI();
 }
 
@@ -153,7 +183,6 @@ function editEntry(entry){
         expenseAmount.value = ENTRY.amount;
         expenseTitle.value = ENTRY.title;
     }
-
     deleteEntry(entry);
 }
 
@@ -245,3 +274,4 @@ function inactive( elements ){
         element.classList.remove("active");
     })
 }
+
