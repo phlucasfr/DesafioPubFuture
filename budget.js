@@ -13,6 +13,15 @@ function fazPost(url, body) {
     return request.responseText
 }
 
+function fazPut(url, body) {
+    console.log("Body=", body)
+    let request = new XMLHttpRequest()
+    request.open("PUT", url+id, true)
+    request.setRequestHeader("Content-type", "application/json")
+    request.send(JSON.stringify(body))
+
+}
+
 function fazDelete(url) {
     let request = new XMLHttpRequest()
     request.open("DELETE", url+id, false)
@@ -118,13 +127,14 @@ addIncome.addEventListener("click", function(){
         amount : parseInt(incomeAmount.value),
     }
     let url = "http://phlucasfr.pythonanywhere.com/receita/"  
-    let nomeEntrada = document.getElementById("income-title-input").value
+    nomeEntrada = document.getElementById("income-title-input").value
     idEntradas = document.getElementById("income-title-input").querySelector('option:checked')
     idEntrada = idEntradas.dataset.ident
-    let valorEntrada = document.getElementById("income-amount-input").value
+    valorEntrada = document.getElementById("income-amount-input").value
     
     id = idEntrada
-    
+    nmentrada = nomeEntrada
+    vlrentrada = valorEntrada    
     
     console.log(nomeEntrada)
     console.log(valorEntrada)
@@ -156,15 +166,18 @@ function deleteOrEdit(event){
     if( targetBtn.id == DELETE ){
         deleteEntry(entry);
     }else if(targetBtn.id == EDIT ){
-        editEntry(entry);
+        editEntry(entry)
+        if (targetBtn.id == addIncome){
+            fazPut(url)
+        };
+        
     }
 }
 
 function deleteEntry(entry){
     console.log(entry)
-    let url = "http://phlucasfr.pythonanywhere.com/receita/"    
-    dltid = id
-    console.log(dltid)
+    url = "http://phlucasfr.pythonanywhere.com/receita/"    
+    
     fazDelete(url);
 
     ENTRY_LIST.splice(entry.id, 1);
@@ -173,17 +186,23 @@ function deleteEntry(entry){
 }
 
 function editEntry(entry){
-    console.log(entry)
+    console.log(entry)    
+    body = {
+        "tipo": nmentrada,
+        "valor": vlrentrada
+    }
     let ENTRY = ENTRY_LIST[entry.id];
 
     if(ENTRY.type == "income"){
         incomeAmount.value = ENTRY.amount;
         incomeTitle.value = ENTRY.title;
+
     }else if(ENTRY.type == "expense"){
         expenseAmount.value = ENTRY.amount;
         expenseTitle.value = ENTRY.title;
     }
     deleteEntry(entry);
+    
 }
 
 function updateUI(){
