@@ -1,8 +1,8 @@
 // GLOBAL FUNCTIONS
-function fazPost(url, body) {
+function fazPostInc(incurl, body) {
     console.log("Body=", body)
     let request = new XMLHttpRequest()
-    request.open("POST", url+id, true)
+    request.open("POST", incurl+id, true)
     request.setRequestHeader("Content-type", "application/json")
     request.send(JSON.stringify(body))
 
@@ -13,18 +13,53 @@ function fazPost(url, body) {
     return request.responseText
 }
 
-function fazPut(url, body) {
+function fazPostExp(expurl, body) {
     console.log("Body=", body)
     let request = new XMLHttpRequest()
-    request.open("PUT", url+id, true)
+    request.open("POST", expurl+expId, true)
+    request.setRequestHeader("Content-type", "application/json")
+    request.send(JSON.stringify(body))
+
+    request.onload = function() {
+        console.log(this.responseText)
+    }
+
+    return request.responseText
+}
+
+function fazPutInc(incurl, body) {
+    console.log("Body=", body)
+    let request = new XMLHttpRequest()
+    request.open("PUT", incurl+id, true)
     request.setRequestHeader("Content-type", "application/json")
     request.send(JSON.stringify(body))
 
 }
 
-function fazDelete(url) {
+function fazPutExp(expurl, body) {
+    console.log("Body=", body)
     let request = new XMLHttpRequest()
-    request.open("DELETE", url+id, false)
+    request.open("PUT", expurl+expId, true)
+    request.setRequestHeader("Content-type", "application/json")
+    request.send(JSON.stringify(body))
+
+}
+
+function fazDeleteInc(incurl) {
+    let request = new XMLHttpRequest()
+    request.open("DELETE", incurl+id, false)
+    request.send()
+    
+    request.onload = function() {
+        console.log(this.responseText)
+    }
+
+    return request.responseText
+}
+
+function fazDeleteExp(expurl) {
+    let request = new XMLHttpRequest()
+    request.open("DELETE", expurl+expId, false)
     request.send()
     
     request.onload = function() {
@@ -97,10 +132,18 @@ addExpense.addEventListener("click", function(){
         title : expenseTitle.value,
         amount : parseInt(expenseAmount.value)
     }
-    let url = "http://phlucasfr.pythonanywhere.com/despesa"
-    let nomeSaida = document.getElementById("expense-title-input").value
-    let valorSaida = document.getElementById("expense-amount-input").value
-    console.log(nomeSaida)   
+    
+    let expurl = "http://phlucasfr.pythonanywhere.com/despesa/"  
+    nomeSaida = document.getElementById("expense-title-input").value
+    idSaidas = document.getElementById("expense-title-input").querySelector('option:checked')
+    idSaida = idSaidas.dataset.identexp
+    valorSaida = document.getElementById("expense-amount-input").value
+    
+    expId = idSaida
+    nmsaida = nomeSaida
+    vlrsaida = valorSaida   
+    
+    console.log(nomeSaida)
     console.log(valorSaida)
 
     body = {
@@ -108,7 +151,7 @@ addExpense.addEventListener("click", function(){
         "valor": valorSaida
     }
 
-    fazPost(url, body)
+    fazPostExp(expurl, body)
 
     ENTRY_LIST.push(expense);
 
@@ -126,7 +169,7 @@ addIncome.addEventListener("click", function(){
         title : incomeTitle.value,
         amount : parseInt(incomeAmount.value),
     }
-    let url = "http://phlucasfr.pythonanywhere.com/receita/"  
+    let incurl = "http://phlucasfr.pythonanywhere.com/receita/"  
     nomeEntrada = document.getElementById("income-title-input").value
     idEntradas = document.getElementById("income-title-input").querySelector('option:checked')
     idEntrada = idEntradas.dataset.ident
@@ -144,7 +187,7 @@ addIncome.addEventListener("click", function(){
         "valor": valorEntrada
     }
 
-    fazPost(url, body)
+    fazPostInc(incurl, body)
 
     ENTRY_LIST.push(income);
 
@@ -160,15 +203,20 @@ allList.addEventListener("click", deleteOrEdit);
 
 function deleteOrEdit(event){
     const targetBtn = event.target;
-
     const entry = targetBtn.parentNode;
+    let ENTRY = ENTRY_LIST[entry.id];
 
     if( targetBtn.id == DELETE ){
         deleteEntry(entry);
     }else if(targetBtn.id == EDIT ){
         editEntry(entry)
         if (targetBtn.id == addIncome){
-            fazPut(url)
+            if(ENTRY.type == "income"){
+                fazPutInc(incurl);
+        
+            }else if(ENTRY.type == "expense"){
+                fazPutExp(expurl);
+            }
         };
         
     }
@@ -176,9 +224,18 @@ function deleteOrEdit(event){
 
 function deleteEntry(entry){
     console.log(entry)
-    url = "http://phlucasfr.pythonanywhere.com/receita/"    
+    incurl = "http://phlucasfr.pythonanywhere.com/receita/"
+    expurl = "http://phlucasfr.pythonanywhere.com/despesa/"    
+    let ENTRY = ENTRY_LIST[entry.id];
+    console.log(ENTRY)
+
+    if(ENTRY.type == "income"){
+        fazDeleteInc(incurl);
+
+    }else if(ENTRY.type == "expense"){
+        fazDeleteExp(expurl);
+    }
     
-    fazDelete(url);
 
     ENTRY_LIST.splice(entry.id, 1);
    
