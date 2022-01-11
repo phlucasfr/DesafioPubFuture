@@ -1,55 +1,37 @@
 // GLOBAL FUNCTIONS
-function fazPostInc(incurl, body) {
-    console.log("Body=", body)
-    let request = new XMLHttpRequest()
-    request.open("POST", incurl+id, true)
-    request.setRequestHeader("Content-type", "application/json")
-    request.send(JSON.stringify(body))
-
-    request.onload = function() {
-        console.log(this.responseText)
-    }
-
-    return request.responseText
-}
-
-function fazPostExp(expurl, body) {
-    console.log("Body=", body)
-    let request = new XMLHttpRequest()
-    request.open("POST", expurl+expId, true)
-    request.setRequestHeader("Content-type", "application/json")
-    request.send(JSON.stringify(body))
-
-    request.onload = function() {
-        console.log(this.responseText)
-    }
-
-    return request.responseText
-}
-
 function fazPutInc(incurl, body) {
     console.log("Body=", body)
     let request = new XMLHttpRequest()
-    request.open("PUT", incurl+id, true)
+    request.open("PUT", incurl, true)
     request.setRequestHeader("Content-type", "application/json")
     request.send(JSON.stringify(body))
+    
+    request.onload = function() {
+        console.log(this.responseText)
+    }
 
+    return request.responseText
 }
 
 function fazPutExp(expurl, body) {
     console.log("Body=", body)
     let request = new XMLHttpRequest()
-    request.open("PUT", expurl+expId, true)
+    request.open("PUT", expurl, true)
     request.setRequestHeader("Content-type", "application/json")
     request.send(JSON.stringify(body))
 
+    request.onload = function() {
+        console.log(this.responseText)
+    }
+
+    return request.responseText
 }
 
 function fazDeleteInc(incurl) {
     let request = new XMLHttpRequest()
-    request.open("DELETE", incurl+id, false)
-    request.send()
-    
+    request.open("DELETE", incurl, true)
+    request.send()  
+
     request.onload = function() {
         console.log(this.responseText)
     }
@@ -59,9 +41,9 @@ function fazDeleteInc(incurl) {
 
 function fazDeleteExp(expurl) {
     let request = new XMLHttpRequest()
-    request.open("DELETE", expurl+expId, false)
+    request.open("DELETE", expurl, true)
     request.send()
-    
+
     request.onload = function() {
         console.log(this.responseText)
     }
@@ -76,8 +58,10 @@ const incomeEl = document.querySelector("#income");
 const expenseEl = document.querySelector("#expense");
 const allEl = document.querySelector("#all");
 const incomeList = document.querySelector("#income .list");
+
 const expenseList = document.querySelector("#expense .list");
 const allList = document.querySelector("#all .list");
+
 
 // SELECT BTNS
 const expenseBtn = document.querySelector(".tab1");
@@ -89,7 +73,7 @@ const addExpense = document.querySelector(".add-expense");
 const expenseTitle = document.getElementById("expense-title-input");
 const expenseAmount = document.getElementById("expense-amount-input");
 
-const addIncome = document.querySelector(".add-income");
+addIncome = document.querySelector(".add-income");
 const incomeTitle = document.getElementById("income-title-input");
 const incomeAmount = document.getElementById("income-amount-input");
 
@@ -127,31 +111,28 @@ addExpense.addEventListener("click", function(){
     if(!expenseTitle.value || !expenseAmount.value ) return;
 
     // SAVE THE ENTRY TO ENTRY_LIST
-    let expense = {
+    let expurl = "https://phlucasfr.pythonanywhere.com/despesa/"
+    idSaidas = document.getElementById("expense-title-input").querySelector('option:checked')
+    idSaida = idSaidas.dataset.identexp
+
+    expId = idSaida
+
+    expense = {
+        ident : expId,
         type : "expense",
         title : expenseTitle.value,
         amount : parseInt(expenseAmount.value)
     }
-    
-    let expurl = "http://phlucasfr.pythonanywhere.com/despesa/"  
-    nomeSaida = document.getElementById("expense-title-input").value
-    idSaidas = document.getElementById("expense-title-input").querySelector('option:checked')
-    idSaida = idSaidas.dataset.identexp
-    valorSaida = document.getElementById("expense-amount-input").value
-    
-    expId = idSaida
-    nmsaida = nomeSaida
-    vlrsaida = valorSaida   
-    
-    console.log(nomeSaida)
-    console.log(valorSaida)
 
+    ident = expense["ident"]
+    console.log(ident)
+    
     body = {
-        "tipo": nomeSaida,
-        "valor": valorSaida
+        "tipo": expenseTitle.value,
+        "valor": parseInt(expenseAmount.value)
     }
 
-    fazPostExp(expurl, body)
+    fazPutExp(expurl+expId, body)
 
     ENTRY_LIST.push(expense);
 
@@ -164,30 +145,28 @@ addIncome.addEventListener("click", function(){
     if(!incomeTitle.value || !incomeAmount.value ) return;
 
     // SAVE THE ENTRY TO ENTRY_LIST
-    let income = {
+    let incurl = "https://phlucasfr.pythonanywhere.com/receita/"
+    idEntradas = document.getElementById("income-title-input").querySelector('option:checked')
+    idEntrada = idEntradas.dataset.ident
+
+    id = idEntrada
+
+    income = {
+        ident : id,
         type : "income",
         title : incomeTitle.value,
         amount : parseInt(incomeAmount.value),
     }
-    let incurl = "http://phlucasfr.pythonanywhere.com/receita/"  
-    nomeEntrada = document.getElementById("income-title-input").value
-    idEntradas = document.getElementById("income-title-input").querySelector('option:checked')
-    idEntrada = idEntradas.dataset.ident
-    valorEntrada = document.getElementById("income-amount-input").value
-    
-    id = idEntrada
-    nmentrada = nomeEntrada
-    vlrentrada = valorEntrada    
-    
-    console.log(nomeEntrada)
-    console.log(valorEntrada)
 
+    ident = income["ident"]
+    console.log(ident)
+    
     body = {
-        "tipo": nomeEntrada,
-        "valor": valorEntrada
+        "tipo": incomeTitle.value,
+        "valor": parseInt(incomeAmount.value)
     }
 
-    fazPostInc(incurl, body)
+    fazPutInc(incurl+ident, body)
 
     ENTRY_LIST.push(income);
 
@@ -204,62 +183,55 @@ allList.addEventListener("click", deleteOrEdit);
 function deleteOrEdit(event){
     const targetBtn = event.target;
     const entry = targetBtn.parentNode;
-    let ENTRY = ENTRY_LIST[entry.id];
+    incurl = "https://phlucasfr.pythonanywhere.com/receita/"
+    expurl = "https://phlucasfr.pythonanywhere.com/despesa/"
 
     if( targetBtn.id == DELETE ){
         deleteEntry(entry);
     }else if(targetBtn.id == EDIT ){
-        editEntry(entry)
-        if (targetBtn.id == addIncome){
-            if(ENTRY.type == "income"){
-                fazPutInc(incurl);
-        
-            }else if(ENTRY.type == "expense"){
-                fazPutExp(expurl);
-            }
-        };
-        
+        editEntry(entry);
     }
+}
+
+
+function deleteEntryOnly(entry){
+    let ENTRY = ENTRY_LIST[entry.id];
+    console.log(ENTRY)
+
+    ENTRY_LIST.splice(entry.id, 1);
+    updateUI();
 }
 
 function deleteEntry(entry){
     console.log(entry)
-    incurl = "http://phlucasfr.pythonanywhere.com/receita/"
-    expurl = "http://phlucasfr.pythonanywhere.com/despesa/"    
+    incurl = "https://phlucasfr.pythonanywhere.com/receita/"
+    expurl = "https://phlucasfr.pythonanywhere.com/despesa/"
     let ENTRY = ENTRY_LIST[entry.id];
     console.log(ENTRY)
+    ids = ENTRY.ident
 
     if(ENTRY.type == "income"){
-        fazDeleteInc(incurl);
-
+        fazDeleteInc(incurl+ids);
     }else if(ENTRY.type == "expense"){
-        fazDeleteExp(expurl);
+        fazDeleteExp(expurl+ids);
     }
     
-
     ENTRY_LIST.splice(entry.id, 1);
-   
     updateUI();
 }
 
 function editEntry(entry){
     console.log(entry)    
-    body = {
-        "tipo": nmentrada,
-        "valor": vlrentrada
-    }
     let ENTRY = ENTRY_LIST[entry.id];
-
+    
     if(ENTRY.type == "income"){
         incomeAmount.value = ENTRY.amount;
         incomeTitle.value = ENTRY.title;
-
     }else if(ENTRY.type == "expense"){
         expenseAmount.value = ENTRY.amount;
         expenseTitle.value = ENTRY.title;
     }
-    deleteEntry(entry);
-    
+    deleteEntryOnly(entry);
 }
 
 function updateUI(){
@@ -279,11 +251,11 @@ function updateUI(){
 
     ENTRY_LIST.forEach( (entry, index) => {
         if( entry.type == "expense" ){
-            showEntry(expenseList, entry.type, entry.title, entry.amount, index)
+            showEntry(expenseList, entry.type, entry.title, entry.amount, index, entry.ident)
         }else if( entry.type == "income" ){
-            showEntry(incomeList, entry.type, entry.title, entry.amount, index)
+            showEntry(incomeList, entry.type, entry.title, entry.amount, index, entry.ident)
         }
-        showEntry(allList, entry.type, entry.title, entry.amount, index)
+        showEntry(allList, entry.type, entry.title, entry.amount, index, entry.ident)
     });
 
     updateChart(income, outcome);
@@ -291,9 +263,9 @@ function updateUI(){
     localStorage.setItem("entry_list", JSON.stringify(ENTRY_LIST));
 }
 
-function showEntry(list, type, title, amount, id){
+function showEntry(list, type, title, amount, id, ident){
 
-    const entry = ` <li id = "${id}" class="${type}">
+    const entry = ` <li identy="${ident}" id="${id}" class="${type}">
                         <div class="entry">${title}: R$${amount}</div>
                         <div id="edit"></div>
                         <div id="delete"></div>
@@ -350,4 +322,3 @@ function inactive( elements ){
         element.classList.remove("active");
     })
 }
-
