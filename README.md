@@ -6,9 +6,4 @@ DOCUMENTAÇÃO - DISPONÍVEL EM PT-BR<a href="https://github.com/phlucasfr/api-p
 <strong>Back - Python/Flask.<br></strong>
 <strong>Banco de Dados - MySQL.<br></strong>
 
- ![Alt text](screen/1.gif?raw=true "Portfolio")
- ![Alt text](screen/2.gif?raw=true "API")
-
-
-
-
+ ![Alt text](screen/1.gif?raw=true "APP")
